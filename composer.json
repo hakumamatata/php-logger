@@ -1,0 +1,20 @@
+{
+    "name": "hakumamatata/php-logger",
+    "description": "LOG紀錄(Table) PHP 原生版本",
+    "type": "library",
+    "keywords": [
+        "extension"
+    ],
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "edgar",
+            "email": "s985432@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "hakumamatata\\phplogger\\": "src/"
+        }
+    }
+}
