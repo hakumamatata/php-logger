@@ -1,6 +1,17 @@
-hakumamatata/php-logger
+hakumamatata/phplogger
 =======================
 LOG紀錄(Table) php 原生版本
+
+版本更新
+----
+v1.0.5.1 :
+更新 - 將recordAct()、recordErrorLog()兩個方法做try...catch 包裝(有開關可以設定)，增加系統穩定性，並且有錯誤紀錄。
+
+v1.0.5 :
+更新 - 抓取 message欄位的$_GET、$_POST資訊時，增加過濾長度的功能 (避免像base64...等太長的字串)。
+
+v1.0.4.1 :
+更新 - 創建式開放兩個參數(dateLogined、userId)可以設定，假使有設定時可不依賴單一登入Saml的方式就可以記錄登入系統的LOG。
 
 安裝
 ----
@@ -9,13 +20,13 @@ LOG紀錄(Table) php 原生版本
 執行
 
 ```
-php composer.phar require hakumamatata/php-logger "*"
+php composer.phar require hakumamatata/phplogger "*"
 ```
 
 或增加
 
 ```
-"hakumamatata/php-logger": "*"
+"hakumamatata/phplogger": "*"
 ```
 
 到你的 `composer.json` 檔案中
@@ -43,7 +54,7 @@ require './vendor/autoload.php';
 
 命名空間:
 ```
-use hakumamatata\phplogger\NormalLogPDO;
+use eztechtw\phplogger\NormalLogPDO;
 ```
 
 創建式
@@ -75,6 +86,8 @@ try {
             'isLog' => true,
             // 是否紀錄 操作紀錄 的開關，預設值為true
             'isErrorLog' => true,
+            // 是否使用session檢查 登入系統LOG 的開關，預設值為true
+            'isSessionCheck' => true,
             // DB 類型 預設值為 mysql
             'dbType' => 'mysql',
             // DB 名稱 預設值為 login
@@ -83,6 +96,19 @@ try {
             'dbTableName' => 'login_normal_log',
             // DB 連線 charset 預設值為 utf8
             'dbCharset' => 'utf8',
+            
+            # 以下同樣為選填，有填寫的話，可不依賴單一登入SAML
+            // 單一登入的登入時間
+            'dateLogined' => '2019-09-20 13:05:40',
+            // 與上一個參數共同使用 主要為記錄系統登入LOG 
+            'userId' => 'string',
+            
+            // (過濾)可接收最長長度，預設值為1000
+            'filterLimitLength' => 1000,
+            // 最高過濾階層，預設值為3
+            'filterMaxResortLevel' => 3,
+            // 是否丟出異常或錯誤的開關，預設值為false
+            'isThrowException' => false,
         ]);
 } catch (\PDOException $e) {
     // error handler
@@ -150,3 +176,12 @@ try {
     echo 'recordErrorLog failed: ' . $e->getMessage();
 }
 ```
+
+
+備註
+----
+呼叫recordAct()，組件會自動記錄 系統登入的LOG(會依賴單一登入資訊以及使用session檢查，同一登入只會記錄一次)。
+
+增加單一登入(simpleSAMLphp)的依賴。
+
+增加ENV套件(vlucas/phpdotenv)的依賴。
